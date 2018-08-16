@@ -58,6 +58,12 @@ jobs:
           destination: htmlcov
 
       - run:
+          name: run example
+          command: |
+            cd demo
+            pipenv run pytest
+
+      - run:
           name: build docs
           command: |
             cd doc
