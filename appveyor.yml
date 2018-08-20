@@ -1,4 +1,4 @@
-version: {build}
+version: dev-{build}
 
 install:
 - cmd:
