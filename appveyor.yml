@@ -6,5 +6,4 @@ install:
 
 
 build_script:
-- cd demo
 - py -3.6-32 -m pytest
