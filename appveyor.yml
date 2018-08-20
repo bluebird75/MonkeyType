@@ -1,7 +1,12 @@
 version: {build}
 
-build_script:
-- cmd: >-
+install:
+- cmd:
     cd demo
     py -3.6-32 -m pip install -r requirements.txt --user
+
+
+build_script:
+- cmd:
+    cd demo
     py -3.6-32 -m pytest
