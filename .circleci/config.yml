@@ -27,6 +27,13 @@ jobs:
             echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
 
       - run:
+          name: run example
+          command: |
+            cd demo
+            pip install -r requirements.txt
+            pytest
+
+      - run:
           name: install dependencies
           command: |
             pip install --user pipenv
@@ -56,12 +63,6 @@ jobs:
       - store_artifacts:
           path: htmlcov
           destination: htmlcov
-
-      - run:
-          name: run example
-          command: |
-            cd demo
-            pipenv run pytest .
 
       - run:
           name: build docs
