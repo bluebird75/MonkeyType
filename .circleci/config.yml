@@ -100,7 +100,7 @@ jobs:
           command: |
             cd demo
             pip install -r requirements.txt --user
-            pytest -v  --show-capture=all
+            pytest -v  -s
 
       - run:
           name: install dependencies
