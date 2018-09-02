@@ -4,6 +4,17 @@ Changelog
 master
 ------
 
+18.8.0
+------
+
+* Support Python 3.7. Merge of #107, fixes #78.
+
+* Print useful error message when filename is passed to stub/apply. Merge of
+  #88, fixes #65. Thanks rajathagasthya.
+
+* Fix crash in ``list_modules`` when there are no traces. Merge of #106, fixes
+  #90.  Thanks tyrinwu.
+
 * Enable ``python -m monkeytype {run,stub,apply} ...``. Merge of #100, fixes
   #99. Thanks retornam.
 

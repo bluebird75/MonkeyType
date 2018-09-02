@@ -70,10 +70,10 @@ class LoudContextConfig(DefaultConfig):
 
 @pytest.fixture
 def store_data():
-    db_file = tempfile.NamedTemporaryFile(prefix='monkeytype_tests')
-    conn = sqlite3.connect(db_file.name)
-    create_call_trace_table(conn)
-    return SQLiteStore(conn), db_file
+    with tempfile.NamedTemporaryFile(prefix='monkeytype_tests') as db_file:
+        conn = sqlite3.connect(db_file.name)
+        create_call_trace_table(conn)
+        yield SQLiteStore(conn), db_file
 
 
 @pytest.fixture
@@ -209,6 +209,17 @@ def test_display_list_of_modules(store_data, stdout, stderr):
     assert ret == 0
 
 
+def test_display_list_of_modules_no_modules(store_data, stdout, stderr):
+    store, db_file = store_data
+    with mock.patch.dict(os.environ, {DefaultConfig.DB_PATH_VAR: db_file.name}):
+        ret = cli.main(['list-modules'], stdout, stderr)
+    expected = ""
+    assert stderr.getvalue() == expected
+    expected = "\n"
+    assert stdout.getvalue() == expected
+    assert ret == 0
+
+
 def test_display_sample_count(capsys, stderr):
     traces = [
         CallTrace(func, {'a': int, 'b': str}, NoneType),
@@ -273,6 +284,24 @@ def test_pathlike_parameter(store_data, capsys):
             cli.main(['stub', 'test/foo.py:bar'], stdout, stderr)
         out, err = capsys.readouterr()
         assert "test/foo.py does not look like a valid Python import path" in err
+
+
+def test_toplevel_filename_parameter(store_data, stdout, stderr):
+    filename = 'foo.py'
+    store, db_file = store_data
+    with mock.patch.dict(os.environ, {DefaultConfig.DB_PATH_VAR: db_file.name}):
+        orig_exists = os.path.exists
+
+        def side_effect(x):
+            return True if x == filename else orig_exists(x)
+        with mock.patch('os.path.exists', side_effect=side_effect) as mock_exists:
+            ret = cli.main(['stub', filename], stdout, stderr)
+            mock_exists.assert_called_with(filename)
+        err_msg = f"No traces found for {filename}; did you pass a filename instead of a module name? " \
+                  f"Maybe try just '{os.path.splitext(filename)[0]}'.\n"
+        assert stderr.getvalue() == err_msg
+        assert stdout.getvalue() == ''
+        assert ret == 0
 
 
 @pytest.mark.usefixtures("collector")
