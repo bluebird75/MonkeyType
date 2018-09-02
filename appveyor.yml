@@ -6,4 +6,4 @@ install:
 
 
 build_script:
-- py -3.6-32 -m pytest -v
+- py -3.6-32 -m pytest -v  --show-capture=all

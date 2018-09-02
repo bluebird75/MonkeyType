@@ -6,6 +6,7 @@ Sample code for MonkeyType demonstration exercise at PyCon 2018.
 """
 from datetime import datetime
 from typing import Collection, Dict, List, Optional
+from pprint import pprint
 
 import inbox
 import models
@@ -239,8 +240,11 @@ def test_everything():
     repo = FakeRepo(u, other, first_entry, second_entry, like1, like2, comment, follow)
     box = inbox.Inbox(u, repo)
 
+    b = box.aggregate()
+    pprint(b)
+
     assert (
-        box.aggregate()
+        b
         == [
             models.AggregatedItem(
                 type=models.EventType.LIKED,
